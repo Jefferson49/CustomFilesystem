@@ -37,6 +37,10 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 
 
+//Autoload the latest version of the common code library, which is shared between webtrees custom modules
+//Caution: This autoload needs to be executed before autoloading any other libraries from __DIR__/vendor
+require_once __DIR__ . '/vendor/jefferson49/webtrees-common/autoload.php';
+
 //Autoload this webtrees custom module
 $loader = new ClassLoader(__DIR__);
 $loader->addPsr4('Jefferson49\\Webtrees\\Module\\CustomFilesystem\\', __DIR__ . '/src');

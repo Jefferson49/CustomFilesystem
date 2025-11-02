@@ -35,6 +35,7 @@ namespace Jefferson49\Webtrees\Module\CustomFilesystem;
 use Fisharebest\Webtrees\Factories\FilesystemFactory;
 use Fisharebest\Webtrees\FlashMessages;
 use Fisharebest\Webtrees\I18N;
+use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
@@ -42,7 +43,10 @@ use Fisharebest\Webtrees\Module\ModuleGlobalInterface;
 use Fisharebest\Webtrees\Module\ModuleGlobalTrait;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Webtrees;
+use Jefferson49\Webtrees\Exceptions\GithubCommunicationError;
+use Jefferson49\Webtrees\Helpers\GithubService;
 use Jefferson49\Webtrees\Module\CustomFilesystem\Contracts\CustomFilesystemFactoryInterface;
+use Jefferson49\Webtrees\Module\CustomModuleManager\ModuleUpdates\GithubModuleUpdate;
 
 use ReflectionMethod;
 
@@ -125,11 +129,57 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
 
     /**
      * {@inheritDoc}
+     *
+     * @return string
+     *
+     * @see \Fisharebest\Webtrees\Module\ModuleCustomInterface::customModuleLatestVersion()
+     */
+    public function customModuleLatestVersion(): string
+    {
+        return Registry::cache()->file()->remember(
+            $this->name() . '-latest-version',
+            function (): string {
+
+                try {
+                    //Get latest release from GitHub
+                    return GithubService::getLatestReleaseTag(self::GITHUB_REPO);
+                }
+                catch (GithubCommunicationError $ex) {
+                    // Can't connect to GitHub?
+                    return $this->customModuleVersion();
+                }
+            },
+            86400
+        );
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fisharebest\Webtrees\Module\ModuleCustomInterface::customModuleSupportUrl()
      */
     public function customModuleSupportUrl(): string
     {
         return 'https://github.com/' . self::GITHUB_REPO;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param string $language
+     *
+     * @return array
+     *
+     * @see \Fisharebest\Webtrees\Module\ModuleCustomInterface::customTranslations()
+     */
+    public function customTranslations(string $language): array
+    {
+        $lang_dir   = $this->resourcesFolder() . 'lang/';
+        $file       = $lang_dir . $language . '.mo';
+        if (file_exists($file)) {
+            return (new Translation($file))->asArray();
+        } else {
+            return [];
+        }
     }
 
     /**
