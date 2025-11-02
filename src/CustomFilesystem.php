@@ -32,6 +32,9 @@ declare(strict_types=1);
 
 namespace Jefferson49\Webtrees\Module\CustomFilesystem;
 
+use Fisharebest\Webtrees\Contracts\FilesystemFactoryInterface;
+use Fisharebest\Webtrees\Factories\FilesystemFactory;
+use Fisharebest\Webtrees\FlashMessages;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
@@ -39,6 +42,12 @@ use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleGlobalInterface;
 use Fisharebest\Webtrees\Module\ModuleGlobalTrait;
 use Fisharebest\Webtrees\Registry;
+use Fisharebest\Webtrees\Webtrees;
+
+use ReflectionMethod;
+
+use function file_exists;
+use function parse_ini_file;
 
 
 class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, ModuleGlobalInterface
@@ -46,19 +55,34 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
     use ModuleCustomTrait;
     use ModuleGlobalTrait;
 
-    // Module constants
-    public const CUSTOM_AUTHOR  = 'Markus Hemprich';
-    public const CUSTOM_VERSION = '0.0.1';
-    public const AUTHOR_WEBSITE = 'https://github.com/Jefferson49';
-    public const CUSTOM_SUPPORT_URL = self::AUTHOR_WEBSITE . '';
+    //All configured options from the webtrees config.ini.php file
+    private static $webtrees_config = [];
+
+    
+    //Custom module version
+    public const CUSTOM_VERSION = '1.0.0-alpha';
+	//GitHub repository
+	public const GITHUB_REPO = 'Jefferson49/CustomFilesystem';
+	//Author of the custom module
+    public const CUSTOM_AUTHOR = 'Markus Hemprich';
+
 
     /**
      * Bootstrap the module
      */
     public function boot(): void
     {
-        //Register the custom file system
-        Registry::filesystem(new CustomFilesystemFactory());
+        //Create the custom file system
+        $custom_filesystem_factory = $this->getFilesystemFactory();
+
+        if ($custom_filesystem_factory !== null) {
+            //Register the custom filesystem
+            Registry::filesystem($custom_filesystem_factory);
+            return;
+        }
+
+        //Register the default filesystem
+        Registry::filesystem(new FilesystemFactory());
     }
 
     /**
@@ -68,7 +92,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
      */
     public function title(): string
     {
-        return I18N::translate('Custom File System');
+        return I18N::translate('Custom Filesystem');
     }
 
     /**
@@ -78,8 +102,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
      */
     public function description(): string
     {
-        /* I18N: Description of the “Simple Footer” module */
-        return I18N::translate('Connect a folder on your server as an additional file system in webtrees.');
+        return I18N::translate('Create a custom filesystem');
     }
 
     /**
@@ -106,7 +129,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
      */
     public function customModuleSupportUrl(): string
     {
-        return self::CUSTOM_SUPPORT_URL;
+        return 'https://github.com/' . self::GITHUB_REPO;
     }
 
     /**
@@ -126,6 +149,159 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
      */
     public static function viewsNamespace(): string
     {
-        return '_' . basename(__DIR__) . '_';
+        return self::activeModuleName();
     }    
+
+    /**
+     * Get the active module name, e.g. the name of the currently running module
+     *
+     * @return string
+     */
+    public static function activeModuleName(): string
+    {
+        return '_' . basename(dirname(__DIR__, 1)) . '_';
+    }
+
+    /**
+     * Get the custom filesystem factory
+     * 
+     * @return FilesystemFactoryInterface   A configured filesystem factory. Null, if error.
+     */
+    public static function getFilesystemFactory() : ?FilesystemFactoryInterface
+    {
+        $filesystem_factory_names = self::getFilesystemFactoryNames();
+
+        if (sizeof($filesystem_factory_names) !== 1) {
+            return null;
+        }
+        $name = array_values($filesystem_factory_names)[0];
+
+        $name_space = str_replace('\\\\', '\\',__NAMESPACE__ );
+        $name_space .= '\\FilesystemFactories\\';
+        $options = self::getProviderOptions($name);
+
+        //If no options found
+        if (sizeof($options) === 0) {
+            return null;
+        }
+
+        foreach($filesystem_factory_names as $class_name => $filesystem_factory_name) {
+            if ($filesystem_factory_name === $name) {
+                $class_name = $name_space . $class_name;
+                return new $class_name($options);
+            }
+        }
+
+        //If no provider found
+        return null;
+    }
+
+	/**
+     * Return the names of all available filesystem factories
+     *
+     * @return array array<class_name => provider_name>
+     */ 
+
+    public static function getFilesystemFactoryNames(): array {
+
+        $filesystem_factory_names = [];
+        $name_space = str_replace('\\\\', '\\',__NAMESPACE__ );
+        $name_space_factories = $name_space . '\\FilesystemFactories\\';
+        $name_space_contracts = $name_space .'\\Contracts\\';
+
+        foreach (get_declared_classes() as $class_name) { 
+            if (strpos($class_name, $name_space_factories) !==  false) {
+                if (in_array($name_space_contracts . 'CustomFilesystemFactoryInterface', class_implements($class_name))) {
+                    $reflectionMethod = new ReflectionMethod($class_name, 'getName');
+                    $class_name = str_replace($name_space_factories, '', $class_name);
+                    $filesystem_factory_names[$class_name] = $reflectionMethod->invoke(null);    
+                }
+            }
+        }
+
+        return $filesystem_factory_names;
+    }
+
+	/**
+     * Get the options of a provider
+     * 
+     * @param string $name  Authorization provider name
+     * 
+     * @return array        An array with the options. Empty if options could not be read completely.
+     */ 
+
+    public static function getProviderOptions(string $name): array {
+
+        $options = [];
+        $name_space = str_replace('\\\\', '\\',__NAMESPACE__ );
+        $name_space_factories = $name_space . '\\FilesystemFactories\\';
+        $filesystem_factory_names = self::getFilesystemFactoryNames();
+
+        foreach ($filesystem_factory_names as $class_name => $factory_name) {
+            if ($factory_name === $name) {
+                $reflectionMethod = new ReflectionMethod($name_space_factories . $class_name, 'getRequiredOptions');
+                $option_names = $reflectionMethod->invoke(null);
+                break;
+            }
+        }
+
+        // Get the configuration settings from the webtrees configutration
+        $config = self::getWebtreesConfig();
+        foreach ($config as $key => $value) {
+            if (strpos($key, $name . '_') === 0) {
+                $key = str_replace($name . '_', '', $key);
+                $options[$key] = $value;
+            }
+        }
+
+        //Return if no options found, i.e. the authorization provider is not configured
+        if (sizeof($options) === 0) {
+            return [];
+        }
+
+        //Check if configuration is complete, i.e. contains all required options
+        foreach ($option_names as $option_name) {
+            if (!key_exists($option_name, $options)) {
+                FlashMessages::addMessage(I18N::translate('The configuration for the authorization provider "%s" does not include data for the option "%s". Please check the configuration in the following file: data/config.ini.php', $factory_name, $option_name), 'danger');
+                return [];
+            }
+        }
+
+        return $options;
+    }
+
+	/**
+     * Get all options from the webtrees config.ini.php file
+     * 
+     * @param string $name  Filesytem name
+     * 
+     * @return array        An array with the options. Empty if options could not be read.
+     */ 
+
+    public static function getWebtreesConfig(): array {
+
+        // If not already available, read the configuration settings from the webtrees config file
+        if (self::$webtrees_config === [] && file_exists(Webtrees::CONFIG_FILE)) {
+            self::$webtrees_config  = parse_ini_file(Webtrees::CONFIG_FILE);
+        }
+
+        return self::$webtrees_config;
+    }
+
+	/**
+     * Get the value for a certain key in the webtrees configuration (from config.ini.php file)
+     * 
+     * @param string $key
+     * 
+     * @return string
+     */ 
+
+    public static function getConfigValue(string $key): string {
+
+        if (isset(self::getWebtreesConfig()[$key])) {
+            return self::getWebtreesConfig()[$key];
+        } else {
+            return '';
+        }
+    }
 };

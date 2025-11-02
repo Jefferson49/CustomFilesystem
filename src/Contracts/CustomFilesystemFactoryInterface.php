@@ -27,29 +27,28 @@
  * export and filter operations. The module also supports remote downloads/uploads via URL requests.
  * 
  */
- 
+
 declare(strict_types=1);
 
-namespace Jefferson49\Webtrees\Module\CustomFilesystem;
 
-use Composer\Autoload\ClassLoader;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
+namespace Jefferson49\Webtrees\Module\CustomFilesystem\Contracts;
+
+use Fisharebest\Webtrees\Contracts\FilesystemFactoryInterface;
 
 
-//Autoload this webtrees custom module
-$loader = new ClassLoader(__DIR__);
-$loader->addPsr4('Jefferson49\\Webtrees\\Module\\CustomFilesystem\\', __DIR__ . '/src');
-$loader->register();
+interface CustomFilesystemFactoryInterface extends FilesystemFactoryInterface {
 
-//Autoload vendor libraries
-require_once __DIR__ . '/vendor/autoload.php';
+    /**
+     * Get the name of the filesystem factory
+     *
+     * @return string   The name of the filesystem factory.
+     */
+    public static function getName() : string;
 
-//Directly include filesystem factories, because they shall be detected by "get_declared_classes"
-$file_system = new Filesystem(new LocalFilesystemAdapter(__DIR__));
-$files = $file_system->listContents('/src/FilesystemFactories')->toArray();
-foreach ($files as $file) {
-    require_once __DIR__ . '/'. $file->path();
+    /**
+     * Returns a list with options that can be passed to the filesystem factory
+     *
+     * @return array   An array of option names, which can be set for this filesystem factory.
+     */
+    public static function getRequiredOptions() : array;
 }
-
-return true;
