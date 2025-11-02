@@ -132,10 +132,10 @@ class Nextcloud extends FilesystemFactory implements CustomFilesystemFactoryInte
     /**
      * Whether this filesystem factory is configured properly
      *
-     * @return array   An array of option names, which can be set for this filesystem factory.
+     * @return bool  True if the filesystem factory is configured properly, false otherwise.
      */
     public function isConfigured() : bool {
 
         return $this->configured;
-    }    
+    }
 }

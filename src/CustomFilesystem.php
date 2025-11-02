@@ -43,6 +43,7 @@ use Fisharebest\Webtrees\Module\ModuleGlobalInterface;
 use Fisharebest\Webtrees\Module\ModuleGlobalTrait;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Webtrees;
+use Jefferson49\Webtrees\Module\CustomFilesystem\Contracts\CustomFilesystemFactoryInterface;
 
 use ReflectionMethod;
 
@@ -75,7 +76,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
         //Create the custom file system
         $custom_filesystem_factory = $this->getFilesystemFactory();
 
-        if ($custom_filesystem_factory !== null) {
+        if ($custom_filesystem_factory !== null && $custom_filesystem_factory->isConfigured()) {
             //Register the custom filesystem
             Registry::filesystem($custom_filesystem_factory);
             return;
@@ -165,9 +166,9 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
     /**
      * Get the custom filesystem factory
      * 
-     * @return FilesystemFactoryInterface   A configured filesystem factory. Null, if error.
+     * @return CustomFilesystemFactoryInterface   A configured filesystem factory. Null, if error or not available.
      */
-    public static function getFilesystemFactory() : ?FilesystemFactoryInterface
+    public static function getFilesystemFactory() : ?CustomFilesystemFactoryInterface
     {
         $filesystem_factory_names = self::getFilesystemFactoryNames();
 
@@ -178,7 +179,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
 
         $name_space = str_replace('\\\\', '\\',__NAMESPACE__ );
         $name_space .= '\\FilesystemFactories\\';
-        $options = self::getProviderOptions($name);
+        $options = self::getFileystemFactoryOptions($name);
 
         //If no options found
         if (sizeof($options) === 0) {
@@ -223,14 +224,14 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
     }
 
 	/**
-     * Get the options of a provider
+     * Get the options of a fileystem factory from the webtrees config.ini.php file
      * 
-     * @param string $name  Authorization provider name
+     * @param string $name  Fileystem factory name
      * 
      * @return array        An array with the options. Empty if options could not be read completely.
      */ 
 
-    public static function getProviderOptions(string $name): array {
+    public static function getFileystemFactoryOptions(string $name): array {
 
         $options = [];
         $name_space = str_replace('\\\\', '\\',__NAMESPACE__ );
@@ -245,7 +246,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
             }
         }
 
-        // Get the configuration settings from the webtrees configutration
+        // Get the configuration settings from the webtrees configuration
         $config = self::getWebtreesConfig();
         foreach ($config as $key => $value) {
             if (strpos($key, $name . '_') === 0) {
@@ -254,7 +255,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
             }
         }
 
-        //Return if no options found, i.e. the authorization provider is not configured
+        //Return if no options found, i.e. the fileystem factory is not configured
         if (sizeof($options) === 0) {
             return [];
         }
@@ -262,7 +263,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
         //Check if configuration is complete, i.e. contains all required options
         foreach ($option_names as $option_name) {
             if (!key_exists($option_name, $options)) {
-                FlashMessages::addMessage(I18N::translate('The configuration for the authorization provider "%s" does not include data for the option "%s". Please check the configuration in the following file: data/config.ini.php', $factory_name, $option_name), 'danger');
+                FlashMessages::addMessage(I18N::translate('The configuration for the fileystem factory "%s" does not include data for the option "%s". Please check the configuration in the following file: data/config.ini.php', $factory_name, $option_name), 'danger');
                 return [];
             }
         }

@@ -51,4 +51,11 @@ interface CustomFilesystemFactoryInterface extends FilesystemFactoryInterface {
      * @return array   An array of option names, which can be set for this filesystem factory.
      */
     public static function getRequiredOptions() : array;
+
+    /**
+     * Whether this filesystem factory is configured properly
+     *
+     * @return bool  True if the filesystem factory is configured properly, false otherwise.
+     */
+    public function isConfigured() : bool;
 }
