@@ -189,7 +189,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
      */
     public function resourcesFolder(): string
     {
-        return __DIR__ . '/resources/';
+        return __DIR__ . '/../resources/';
     }
 
     /**
