@@ -32,7 +32,6 @@ declare(strict_types=1);
 
 namespace Jefferson49\Webtrees\Module\CustomFilesystem;
 
-use Fisharebest\Webtrees\Contracts\FilesystemFactoryInterface;
 use Fisharebest\Webtrees\Factories\FilesystemFactory;
 use Fisharebest\Webtrees\FlashMessages;
 use Fisharebest\Webtrees\I18N;
@@ -61,7 +60,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
 
     
     //Custom module version
-    public const CUSTOM_VERSION = '1.0.0-alpha';
+    public const CUSTOM_VERSION = '1.0.0-beta';
 	//GitHub repository
 	public const GITHUB_REPO = 'Jefferson49/CustomFilesystem';
 	//Author of the custom module
