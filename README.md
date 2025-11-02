@@ -26,8 +26,8 @@ This README file contains the following main sections:
 ![Screenshot](resources/img/screenshot.jpg)
 
 ## Requirements
-+ [webtrees](https://webtrees.net/download): version 2.1 or greater.
-+ [PHP](https://www.php.net/): version 8.2 or greater.
++ [webtrees](https://webtrees.net/download): Version 2.1 or greater.
++ [PHP](https://www.php.net/): Version 8.2 or greater.
 
 ## Installation
 + Install and use [Custom Module Manager](https://github.com/Jefferson49/CustomModuleManager) for an easy and convenient installation of webtrees custom modules.
@@ -62,7 +62,7 @@ Currently, the following languages are available:
 + English
 + German
 
-You can help to translate this module. The language files are available on [POEditor](https://poeditor.com/projects/view?id=xyz), where you can update or add a language.
+You can help to translate this module. The language files are available on [POEditor](https://poeditor.com/projects/view?id=809248), where you can update or add a language.
 
 Alternatively, you can directly edit the .po translation text files, which can be found in [/resources/lang/](resources/lang). You can use a specific editor like [Poedit](https://poedit.net/) or a text editor like notepad++ to work on translations and provide them in the [GitHub repository](https://github.com/Jefferson49/CustomFilesystem) of the module. You can do this via a pull request (if you know how to do), or by opening a new issue and attaching a .po file. 
 
