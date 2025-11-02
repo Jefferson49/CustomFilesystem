@@ -1,0 +1,35 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CustomFilesystem\n"
+"POT-Creation-Date: 2025-11-02 07:08+0100\n"
+"PO-Revision-Date: 2025-11-02 07:08+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.8\n"
+"X-Poedit-Basepath: ../..\n"
+"X-Poedit-KeywordsList: translate\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: src/CustomFilesystem.php:96
+msgid "Custom Filesystem"
+msgstr "Benutzerdefiniertes Dateisystem"
+
+#: src/CustomFilesystem.php:106
+msgid "Create a custom filesystem"
+msgstr "Erstellen eines benutzerdefinierten Dateisystems"
+
+#: src/CustomFilesystem.php:266
+#, php-format
+msgid ""
+"The configuration for the fileystem \"%s\" does not include data for the "
+"option \"%s\". Please check the configuration in the following file: data/"
+"config.ini.php"
+msgstr ""
+"Die Konfiguration für das Dateisystem „%s“ enthält keine Daten für die "
+"Option „%s“. Bitte überprüfen Sie die Konfiguration in der folgenden Datei: "
+"data/config.ini.php"

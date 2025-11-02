@@ -263,7 +263,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
         //Check if configuration is complete, i.e. contains all required options
         foreach ($option_names as $option_name) {
             if (!key_exists($option_name, $options)) {
-                FlashMessages::addMessage(I18N::translate('The configuration for the fileystem factory "%s" does not include data for the option "%s". Please check the configuration in the following file: data/config.ini.php', $factory_name, $option_name), 'danger');
+                FlashMessages::addMessage(I18N::translate('The configuration for the fileystem "%s" does not include data for the option "%s". Please check the configuration in the following file: data/config.ini.php', $factory_name, $option_name), 'danger');
                 return [];
             }
         }
