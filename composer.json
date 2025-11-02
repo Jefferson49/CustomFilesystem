@@ -1,0 +1,17 @@
+{
+    "require": {
+        "marktaborosi/flysystem-nextcloud": ">=1.0.0"
+    },
+    "replace": {
+        "larapack/dd": "*",
+        "league/flysystem": "*",
+        "league/flysystem-local": "*",
+        "league/mime-type-detection": "*",
+        "psr/log": "*",
+        "sabre/uri": "*",
+        "sabre/vobject": "*",
+        "symfony/deprecation-contracts": "*",
+        "symfony/polyfill-mbstring": "*",
+        "symfony/var-dumper": "*"        
+    }
+}
