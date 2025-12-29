@@ -50,6 +50,9 @@ Other filesystems:
 
 ## Configuration of Filesystems
 ### Nextcloud
+
+**Create a folder called "media"** in your Nextcloud root directory (which is uses as <FOLDER_NAME> below).
+
 Open your webtrees config.ini.php file and add the following lines (copy/paste to the end):
 ```PHP
 Nextcloud_nextcloudUrl = 'https://nextcloud.MYDOMAIN.net'
