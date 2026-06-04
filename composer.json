@@ -20,5 +20,8 @@
         "symfony/deprecation-contracts": "*",
         "symfony/polyfill-mbstring": "*",
         "symfony/var-dumper": "*"        
+    },
+    "config": {
+        "prepend-autoloader": false
     }
 }
