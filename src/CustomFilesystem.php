@@ -35,7 +35,6 @@ namespace Jefferson49\Webtrees\Module\CustomFilesystem;
 use Fisharebest\Webtrees\Factories\FilesystemFactory;
 use Fisharebest\Webtrees\FlashMessages;
 use Fisharebest\Webtrees\I18N;
-use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
@@ -45,8 +44,8 @@ use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Webtrees;
 use Jefferson49\Webtrees\Exceptions\GithubCommunicationError;
 use Jefferson49\Webtrees\Helpers\GithubService;
+use Jefferson49\Webtrees\Internationalization\MoreI18N;
 use Jefferson49\Webtrees\Module\CustomFilesystem\Contracts\CustomFilesystemFactoryInterface;
-use Jefferson49\Webtrees\Module\CustomModuleManager\ModuleUpdates\GithubModuleUpdate;
 
 use ReflectionMethod;
 
@@ -173,13 +172,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
      */
     public function customTranslations(string $language): array
     {
-        $lang_dir   = $this->resourcesFolder() . 'lang/';
-        $file       = $lang_dir . $language . '.mo';
-        if (file_exists($file)) {
-            return (new Translation($file))->asArray();
-        } else {
-            return [];
-        }
+        return MoreI18N::readTranslationsFromMoFile($this->resourcesFolder() . 'lang/', $language);
     }
 
     /**
@@ -323,9 +316,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
 	/**
      * Get all options from the webtrees config.ini.php file
      * 
-     * @param string $name  Filesytem name
-     * 
-     * @return array        An array with the options. Empty if options could not be read.
+     * @return array An array with the options. Empty if options could not be read.
      */ 
 
     public static function getWebtreesConfig(): array {
