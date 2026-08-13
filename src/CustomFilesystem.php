@@ -40,24 +40,18 @@ use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleGlobalInterface;
 use Fisharebest\Webtrees\Module\ModuleGlobalTrait;
 use Fisharebest\Webtrees\Registry;
-use Fisharebest\Webtrees\Webtrees;
+use Jefferson49\Webtrees\Helpers\Configuration;
 use Jefferson49\Webtrees\Helpers\Functions;
 use Jefferson49\Webtrees\Module\CustomFilesystem\Contracts\CustomFilesystemFactoryInterface;
 use Jefferson49\Webtrees\Module\ModuleCustomTrait;
 
 use ReflectionMethod;
 
-use function file_exists;
-use function parse_ini_file;
-
 
 class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, ModuleGlobalInterface
 {
     use ModuleCustomTrait;
     use ModuleGlobalTrait;
-
-    //All configured options from the webtrees config.ini.php file
-    private static $webtrees_config = [];
 
     
     //Custom module version
@@ -194,7 +188,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
         }
 
         // Get the configuration settings from the webtrees configuration
-        $config = self::getWebtreesConfig();
+        $config = Configuration::getWebtreesConfig();
         foreach ($config as $key => $value) {
             if (strpos($key, $name . '_') === 0) {
                 $key = str_replace($name . '_', '', $key);
@@ -217,37 +211,4 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
 
         return $options;
     }
-
-	/**
-     * Get all options from the webtrees config.ini.php file
-     * 
-     * @return array An array with the options. Empty if options could not be read.
-     */ 
-
-    public static function getWebtreesConfig(): array {
-
-        // If not already available, read the configuration settings from the webtrees config file
-        if (self::$webtrees_config === [] && file_exists(Webtrees::CONFIG_FILE)) {
-            self::$webtrees_config  = parse_ini_file(Webtrees::CONFIG_FILE);
-        }
-
-        return self::$webtrees_config;
-    }
-
-	/**
-     * Get the value for a certain key in the webtrees configuration (from config.ini.php file)
-     * 
-     * @param string $key
-     * 
-     * @return string
-     */ 
-
-    public static function getConfigValue(string $key): string {
-
-        if (isset(self::getWebtreesConfig()[$key])) {
-            return self::getWebtreesConfig()[$key];
-        } else {
-            return '';
-        }
-    }
-};
+}
