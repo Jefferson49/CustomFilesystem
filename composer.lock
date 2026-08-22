@@ -4,15 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aba3457d63f288db1be84625df10fd10",
+    "content-hash": "328cad7de2b9b26b38fd9ea2aceff25d",
     "packages": [
         {
             "name": "jefferson49/webtrees-common",
-            "version": "1.2.44",
+            "version": "1.2.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Jefferson49/webtrees-common.git",
-                "reference": "e6a6dfd077591761ddfeb275829002d7917c3658"
+                "reference": "203abf0b2b43df6d26c36a2ec96c8d205890ab74"
             },
             "require": {
                 "php": ">=7.4"
@@ -27,7 +27,7 @@
                 "webtrees",
                 "webtrees-module"
             ],
-            "time": "2026-08-13T04:14:54+00:00"
+            "time": "2026-08-15T19:05:32+00:00"
         },
         {
             "name": "marktaborosi/flysystem-nextcloud",
@@ -369,7 +369,9 @@
     "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {},
+    "platform": {
+        "php": ">=7.4"
+    },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

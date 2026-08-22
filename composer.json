@@ -1,4 +1,24 @@
 {
+    "name": "jefferson49/customfilesystem",
+    "description": "A webtrees custom module to use alternative filesystems within webtrees.",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "keywords": [
+        "webtrees",
+        "custom module"
+    ],
+    "authors": [
+        {
+            "name": "Markus Hemprich",
+            "homepage": "https://github.com/jefferson49",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/jefferson49/customfilesystem",
+    "support": {
+        "issues": "https://github.com/jefferson49/customfilesystem/issues"
+    },
     "repositories": [
         {
             "url": "https://github.com/Jefferson49/webtrees-common.git",
@@ -6,6 +26,7 @@
         }
     ],
     "require": {
+        "php": ">=7.4",
         "jefferson49/webtrees-common": ">=1.2.44",
         "marktaborosi/flysystem-nextcloud": ">=1.0.0"
     },
@@ -19,7 +40,10 @@
         "sabre/vobject": "*",
         "symfony/deprecation-contracts": "*",
         "symfony/polyfill-mbstring": "*",
-        "symfony/var-dumper": "*"        
+        "symfony/var-dumper": "*"
+    },
+    "conflict": {
+        "fisharebest/webtrees": "<2.1"
     },
     "config": {
         "prepend-autoloader": false
