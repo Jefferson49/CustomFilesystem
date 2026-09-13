@@ -20,12 +20,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * 
+ *
  * CustomFilesystem
  *
- * A webtrees(https://webtrees.net) 2.1 custom module for advanced GEDCOM import, 
+ * A webtrees(https://webtrees.net) 2.1 custom module for advanced GEDCOM import,
  * export and filter operations. The module also supports remote downloads/uploads via URL requests.
- * 
+ *
  */
 
 declare(strict_types=1);
@@ -53,7 +53,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
     use ModuleCustomTrait;
     use ModuleGlobalTrait;
 
-    
+
     //Custom module version
     public const CUSTOM_VERSION = '1.0.0-beta';
 	//GitHub repository
@@ -63,7 +63,20 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
 
 
     /**
-     * Bootstrap the module
+     * Constructor
+     */
+    public function __construct()
+    {
+        //Caution: Do not use the shared library jefferson47/webtrees-common within __construct(),
+        //         because it might result in wrong autoload behavior
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return void
+     *
+     * @see \Fisharebest\Webtrees\Module\AbstractModule::boot()
      */
     public function boot(): void
     {
@@ -106,7 +119,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
 
     /**
      * Get the custom filesystem factory
-     * 
+     *
      * @return CustomFilesystemFactoryInterface   A configured filesystem factory. Null, if error or not available.
      */
     public static function getFilesystemFactory() : ?CustomFilesystemFactoryInterface
@@ -142,7 +155,7 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
      * Return the names of all available filesystem factories
      *
      * @return array array<class_name => provider_name>
-     */ 
+     */
 
     public static function getFilesystemFactoryNames(): array {
 
@@ -151,12 +164,12 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
         $name_space_factories = $name_space . '\\FilesystemFactories\\';
         $name_space_contracts = $name_space .'\\Contracts\\';
 
-        foreach (get_declared_classes() as $class_name) { 
+        foreach (get_declared_classes() as $class_name) {
             if (strpos($class_name, $name_space_factories) !==  false) {
                 if (in_array($name_space_contracts . 'CustomFilesystemFactoryInterface', class_implements($class_name))) {
                     $reflectionMethod = new ReflectionMethod($class_name, 'getName');
                     $class_name = str_replace($name_space_factories, '', $class_name);
-                    $filesystem_factory_names[$class_name] = $reflectionMethod->invoke(null);    
+                    $filesystem_factory_names[$class_name] = $reflectionMethod->invoke(null);
                 }
             }
         }
@@ -166,11 +179,11 @@ class CustomFilesystem extends AbstractModule implements ModuleCustomInterface, 
 
 	/**
      * Get the options of a fileystem factory from the webtrees config.ini.php file
-     * 
+     *
      * @param string $name  Fileystem factory name
-     * 
+     *
      * @return array        An array with the options. Empty if options could not be read completely.
-     */ 
+     */
 
     public static function getFileystemFactoryOptions(string $name): array {
 
